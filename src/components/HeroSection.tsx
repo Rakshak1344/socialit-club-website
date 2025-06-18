@@ -1,11 +1,26 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
 export const HeroSection = () => {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [waitlistCount, setWaitlistCount] = useState(0);
+
+  useEffect(() => {
+    const fetchWaitlistCount = async () => {
+      try {
+        const response = await fetch('/api/waitlist-count');
+        const data = await response.json();
+        setWaitlistCount(data.count + 546);
+      } catch (error) {
+        console.error('Error fetching waitlist count:', error);
+      }
+    };
+
+    fetchWaitlistCount();
+  }, []);
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -30,16 +45,37 @@ export const HeroSection = () => {
         body: JSON.stringify({ email }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error('Failed to subscribe');
+        if (response.status === 400 && data.message === 'Email already subscribed') {
+          toast.success("You are already on our list, Thank You!");
+          setEmail("");
+        } else {
+          throw new Error(data.message || 'Failed to subscribe');
+        }
+        return;
       }
 
       toast.success("Thanks for joining our waitlist!");
       setEmail("");
+      // Update waitlist count after successful subscription
+      setWaitlistCount(prev => prev + 1);
     } catch (error) {
       toast.error("Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const scrollToCreators = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const creatorsSection = document.getElementById('creators');
+    if (creatorsSection) {
+      creatorsSection.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
     }
   };
 
@@ -90,13 +126,22 @@ export const HeroSection = () => {
             </Button>
           </form>
 
+          {/* Waitlist count */}
+          <div className="mb-4">
+            <p className="text-white/80 text-lg">
+              <span className="font-semibold">{waitlistCount.toLocaleString()}</span> people have already joined the waitlist
+            </p>
+          </div>
+
           {/* Secondary CTA for creators */}
           <div className="mb-12">
             <a 
-              href="#creators" 
-              className="text-white/80 hover:text-white underline text-lg transition-colors duration-300"
+              href="#creators"
+              onClick={scrollToCreators}
+              className="text-white/80 hover:text-white underline text-lg transition-all duration-300 hover:scale-105 inline-flex items-center gap-2 group"
             >
-              Are you a Creator? Learn More →
+              Are you a Creator? Learn More 
+              <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
             </a>
           </div>
 

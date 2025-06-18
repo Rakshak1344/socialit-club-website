@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 
 export const FeaturedExperiencesSection = () => {
     const experiences = [
@@ -38,6 +39,18 @@ export const FeaturedExperiencesSection = () => {
         participants: "Available"
       }
     ];
+
+    const scrollToCTA = (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      toast.info("Hang-on! Register for early access");
+      const ctaSection = document.getElementById('join-club');
+      if (ctaSection) {
+        ctaSection.scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    };
   
     return (
       <section className="py-24 bg-white">
@@ -97,7 +110,10 @@ export const FeaturedExperiencesSection = () => {
           </div>
   
           <div className="text-center mt-12">
-            <button className="bg-brand-gradient text-white px-8 py-4 rounded-xl font-semibold text-lg hover:scale-105 transition-transform duration-300">
+            <button 
+              onClick={scrollToCTA}
+              className="bg-brand-gradient text-white px-8 py-4 rounded-xl font-semibold text-lg hover:scale-105 transition-transform duration-300"
+            >
               Browse All Experiences
             </button>
           </div>

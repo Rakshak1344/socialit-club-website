@@ -1,3 +1,5 @@
+import { toast } from "sonner";
+
 export const ForCreatorsSection = () => {
     const benefits = [
       {
@@ -16,6 +18,18 @@ export const ForCreatorsSection = () => {
         description: "Start monetizing immediately with zero platform fees to get started"
       }
     ];
+  
+    const scrollToCTA = (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      toast.info("Hang-on! Register for early access");
+      const ctaSection = document.getElementById('join-club');
+      if (ctaSection) {
+        ctaSection.scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    };
   
     return (
       <section id="creators" className="py-24 bg-gray-50">
@@ -106,7 +120,10 @@ export const ForCreatorsSection = () => {
               </div>
   
               <div className="mt-12">
-                <button className="bg-brand-gradient text-white px-8 py-4 rounded-xl font-semibold text-lg hover:scale-105 transition-transform duration-300">
+                <button 
+                  onClick={scrollToCTA}
+                  className="bg-brand-gradient text-white px-8 py-4 rounded-xl font-semibold text-lg hover:scale-105 transition-transform duration-300"
+                >
                   Start Creating Experiences
                 </button>
               </div>
