@@ -1,9 +1,14 @@
 import { Redis } from '@upstash/redis';
 
+// Validate required environment variables
+if (!process.env.KV_REST_API_URL || !process.env.KV_REST_API_TOKEN) {
+  throw new Error('Missing required Redis environment variables. Please check your Vercel configuration.');
+}
+
 // Initialize Redis client with Vercel environment variables
 const redis = new Redis({
-  url: process.env.KV_REST_API_URL || '',
-  token: process.env.KV_REST_API_TOKEN || '',
+  url: process.env.KV_REST_API_URL,
+  token: process.env.KV_REST_API_TOKEN,
 });
 
 export const EMAIL_SETS = {
